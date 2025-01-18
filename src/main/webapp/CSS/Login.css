@@ -1,0 +1,127 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+}
+
+.navbar {
+    background: linear-gradient(90deg, #ff4b2b, #ff416c);
+    transition: all 0.3s ease-in-out;
+}
+
+.navbar-brand {
+    font-size: 2rem;
+    font-weight: bold;
+    color: white;
+}
+
+.navbar-nav .nav-link {
+    font-size: 1.1rem;
+    color: white;
+    margin-left: 2vw;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #ffdfd4;
+    text-decoration: none;
+}
+
+footer {
+    background-color: #212529;
+    color: white;
+    padding: 20px;
+}
+
+footer p {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.navbar-toggler {
+    background-color: #ffffff;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+#login{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 50px;
+}
+
+.login-section, .registration-section {
+    flex-basis: 48%;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.login-section h2, .registration-section h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button.btn{
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: white;
+    color: black;
+    border: solid 2px black;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+button.btn:hover {
+    background-color: darkgrey;
+    color: white;
+    border: none;
+}
+
+.registration-section #rejister {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: #ff5722;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+.registration-section #rejister:hover {
+    background-color: coral;
+}
+
+@media (max-width: 768px) {
+    #login {
+        flex-direction: column;
+    }
+
+    .login-section, .registration-section {
+        flex-basis: 100%;
+    }
+}

@@ -1,21 +1,26 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: Nimasha Shehani
+  Date: 18/01/2025
+  Time: 13:19
+  To change this template use File | Settings | File Templates.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vixora.lk</title>
+  <title>Shop</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="CSS/Shop.css" rel="stylesheet">
   <link rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-  integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
-  crossorigin="anonymous" referrerpolicy="no-referrer" />
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-  <link href="CSS/Home.css" rel="stylesheet">
 </head>
-
 <body>
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -28,7 +33,7 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#"><i class="fa-solid fa-house" style="color: #FFFFFF;"></i></a>
+          <a class="nav-link active" aria-current="page" href="index.jsp"><i class="fa-solid fa-house" style="color: #FFFFFF;"></i></a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="shop.jsp"><i class="fa-solid fa-bag-shopping" style="color: #FFFFFF;"></i></a>
@@ -44,65 +49,25 @@
   </div>
 </nav>
 
-<!-- Hero Section -->
-<section>
-<div class="hero">
-  <div class="container text-center text-white">
-    <!-- Title and Description -->
-    <h1 class="display-4">Discover Fashion Like Never Before</h1>
-    <p class="lead">Your destination for trendy, stylish, and affordable clothing.</p>
-    <a href="shop.jsp" class="btn btn-lg mb-5">Shop Now</a>
-
-    <!-- Scrollable Cards Section -->
-    <div class="scroll-container">
-      <!-- Card 1 -->
-      <div class="card shadow border-0">
-        <img src="https://i.pinimg.com/736x/af/3f/df/af3fdfe68325570588649fb1e21b8b91.jpg" class="card-img-top" alt="Trendy Outfits">
+<!-- Products Section -->
+<div class="container my-5">
+  <h2 class="text-center mb-4">Featured Products</h2>
+  <div class="row">
+    <!-- Product Card -->
+    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+      <div class="card">
+        <img src="path/to/your-product-image.jpg" class="card-img-top" alt="Product Image">
         <div class="card-body">
-          <h5 class="card-title text-center">Trendy Outfits</h5>
-          <h6 class="card-text text-center">Explore the latest styles <br>and make a statement with our unique<br> collection.</h6>
-        </div>
-      </div>
-
-      <!-- Card 2 -->
-      <div class="card shadow border-0">
-        <img src="https://i.pinimg.com/736x/65/a1/08/65a10893a8b9c866631b000549167376.jpg" class="card-img-top" alt="Seasonal Trends">
-        <div class="card-body">
-          <h5 class="card-title text-center">Seasonal Trends</h5>
-          <h6 class="card-text text-center">Stay ahead of the fashion <br>curve with clothing tailored for<br> every season.</h6>
-        </div>
-      </div>
-
-      <!-- Card 3 -->
-      <div class="card shadow border-0">
-        <img src="https://i.pinimg.com/736x/b4/7c/0c/b47c0cb52761a558fd53a38169d389e7.jpg" class="card-img-top" alt="Exclusive Designs">
-        <div class="card-body">
-          <h5 class="card-title text-center">Exclusive Designs</h5>
-          <h6 class="card-text text-center">Shop exclusive designs that you<br> won't find anywhere else.</h6>
-        </div>
-      </div>
-
-      <!-- Card 4 -->
-      <div class="card shadow border-0">
-        <img src="https://i.pinimg.com/736x/77/5f/7c/775f7cfa959175fdfe31b543dd29f1d7.jpg" class="card-img-top" alt="Exclusive Designs">
-        <div class="card-body">
-          <h5 class="card-title text-center">Sustainable Fashion</h5>
-          <h6 class="card-text text-center">Shop eco-friendly and <br> sustainable clothing that supports<br>  a better future.</h6>
-        </div>
-      </div>
-
-      <!-- Card 5 -->
-      <div class="card shadow border-0">
-        <img src="https://i.pinimg.com/736x/7b/3a/f8/7b3af85139bf50c429934f96f11eae94.jpg" class="card-img-top" alt="Exclusive Designs">
-        <div class="card-body">
-          <h5 class="card-title text-center">Limited Edition</h5>
-          <h6 class="card-text text-center">SDiscover our exclusive <br>limited edition pieces before <br>they're gone!</h6>
+          <h5 class="card-title">Product Name</h5>
+          <p class="card-text">$20.00</p>
+          <a href="product-detail.jsp" class="btn btn-primary">View Details</a>
+          <a href="cart.jsp" class="btn btn-success">Add to Cart</a>
         </div>
       </div>
     </div>
+    <!-- Repeat above block for other products -->
   </div>
 </div>
-</section>
 
 <!-- Footer -->
 <footer class="bg-dark text-white pt-5 pb-3" style="font-family: Candara">
@@ -157,8 +122,7 @@
   </div>
 </footer>
 
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.min.js"></script>
 </body>
-
 </html>
+

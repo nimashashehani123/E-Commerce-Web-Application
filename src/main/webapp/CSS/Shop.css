@@ -1,0 +1,43 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+}
+
+.navbar {
+    background: linear-gradient(90deg, #ff4b2b, #ff416c);
+    transition: all 0.3s ease-in-out;
+}
+
+.navbar-brand {
+    font-size: 2rem;
+    font-weight: bold;
+    color: white;
+}
+
+.navbar-nav .nav-link {
+    font-size: 1.1rem;
+    color: white;
+    margin-left: 2vw;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #ffdfd4;
+    text-decoration: none;
+}
+footer {
+    background-color: #212529;
+    color: white;
+    padding: 20px;
+}
+
+footer p {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.navbar-toggler {
+    background-color: #ffffff;
+}
+html {
+    scroll-behavior: smooth;
+}

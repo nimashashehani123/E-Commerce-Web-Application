@@ -1,0 +1,158 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+}
+
+.navbar {
+    background: linear-gradient(90deg, #ff4b2b, #ff416c);
+    transition: all 0.3s ease-in-out;
+}
+
+.navbar-brand {
+    font-size: 2rem;
+    font-weight: bold;
+    color: white;
+}
+
+.navbar-nav .nav-link {
+    font-size: 1.1rem;
+    color: white;
+    margin-left: 2vw;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #ffdfd4;
+    text-decoration: none;
+}
+footer {
+    background-color: #212529;
+    color: white;
+    padding: 20px;
+}
+
+footer p {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.navbar-toggler {
+    background-color: #ffffff;
+}
+html {
+    scroll-behavior: smooth;
+}
+
+h2 {
+    font-size: 2rem;
+    color: #333;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 50px 20px;
+}
+
+/* Register Section */
+.register-section {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 50px;
+}
+
+.register-section h2 {
+    font-size: 2rem;
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-size: 1rem;
+    color: #555;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+button.btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+button.btn:hover {
+    background-color: #0056b3;
+}
+
+/* Login Redirect Section */
+.login-redirect-section {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.login-redirect-section p {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+#login {
+    padding: 12px 30px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+#login:hover {
+    background-color: #218838;
+}
+
+
+
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .register-section {
+        padding: 30px;
+    }
+
+    .form-group input {
+        font-size: 0.9rem;
+    }
+
+    button.btn {
+        font-size: 1.1rem;
+    }
+}

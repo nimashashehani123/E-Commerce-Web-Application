@@ -1,0 +1,154 @@
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+}
+
+.navbar {
+    background: linear-gradient(90deg, #ff4b2b, #ff416c);
+    transition: all 0.3s ease-in-out;
+}
+
+.navbar-brand {
+    font-size: 2rem;
+    font-weight: bold;
+    color: white;
+}
+
+.navbar-nav .nav-link {
+    font-size: 1.1rem;
+    color: white;
+    margin-left: 2vw;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #ffdfd4;
+    text-decoration: none;
+}
+
+.hero {
+    padding: 50px 20px;
+    background: url('https://i.pinimg.com/736x/70/f0/95/70f0950aed4d6cffc10f010b27bcb254.jpg') no-repeat center center;
+    background-size: auto;
+    color: white;
+    height: 220vh;
+    display: flex;
+    justify-content: center;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.hero h1 {
+    font-size: 4rem;
+    font-weight: bold;
+    margin-top: 40vh;
+}
+
+.hero p {
+    font-size: 1.25rem;
+    margin-bottom: 20px;
+}
+
+.hero .btn-lg {
+    font-size: 1.1rem;
+    padding: 12px 25px;
+    border-radius: 50px;
+    border-color: #FFFFFF;
+    background-color: #ff5722;
+    color: #FFFFFF;
+    transition: background-color 0.3s ease-in-out;
+}
+
+
+.hero .btn-lg:hover {
+    background-color: red;
+}
+
+.scroll-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 20px;
+    padding-bottom: 5px;
+    padding-top: 20vh;
+}
+
+.card {
+    min-width: 30vw;
+    height: 100vh;
+    flex-shrink: 0;
+    border-radius: 15px;
+    background-color: rgba(256,256,256,0.1);
+    color: #212529;
+}
+
+.card img {
+    height: 70vh;
+    border-radius: 15px;
+    object-fit: cover;
+}
+
+
+.scroll-container::-webkit-scrollbar {
+    display: none;
+}
+
+.scroll-container {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+footer {
+    background-color: #212529;
+    color: white;
+    padding: 20px;
+}
+
+footer p {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.navbar-toggler {
+    background-color: #ffffff;
+}
+html {
+    scroll-behavior: smooth;
+}
+
+.hero h1 {
+    animation: fadeInUp 2s ease-out;
+}
+
+.hero p {
+    animation: fadeInUp 2s ease-out 0.5s;
+}
+
+.hero .btn-lg {
+    animation: fadeInUp 2s ease-out 1s;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .scroll-container {
+        display: none;
+    }
+    footer {
+        position: absolute;
+        top: 150vh;
+        width: 100%;
+    }
+    .hero h1 {
+        margin-top: 20vh;
+    }
+
+}
