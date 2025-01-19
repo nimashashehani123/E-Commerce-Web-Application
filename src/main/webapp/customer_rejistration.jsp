@@ -51,11 +51,12 @@
 
 <!-- Main Content -->
 <section>
-    <div class="container">
+    <div id="section">
+    <div class="container" id="section1" >
         <!-- Register Section -->
         <div class="register-section">
             <h2>Register</h2>
-            <form action="RegisterServlet" method="post">
+            <form action="RegisterServlet" method="post" id="registerForm">
                 <div class="form-group">
                     <label for="name">Full Name</label>
                     <input type="text" id="name" name="name" required>
@@ -70,7 +71,18 @@
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" name="password" required>
+                        <button type="button" class="toggle-password" data-target="#password">👁️</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="repassword">Re-enter Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="repassword" name="repassword" required>
+                        <button type="button" class="toggle-password" data-target="#repassword">👁️</button>
+                    </div>
+                    <small id="passwordError" style="color: red; display: none;">Passwords do not match!</small>
                 </div>
                 <button type="submit" class="btn">Register</button>
             </form>
@@ -81,6 +93,28 @@
             <h2>Already have an account?</h2>
             <p>Click below to login and start shopping.</p>
             <button id="login" onclick="window.location.href='login.jsp'">Login</button>
+        </div>
+    </div>
+        <div id="section2" style="max-height: 75%">
+            <h3>Why Register?</h3>
+            <p>
+                Exclusive Shopping Access:<br>
+                Only registered members can shop from our site. Gain access to premium products and services unavailable to non-registered visitors.<br><br>
+
+                Personalized Experience:<br>
+                Enjoy a customized shopping experience with tailored recommendations, saved preferences, and faster checkouts.<br><br>
+
+                Order History & Tracking:<br>
+                Easily view and manage your past orders and track your current ones in real-time.<br><br>
+
+                Special Offers & Deals:<br>
+                Get access to member-only discounts and exclusive deals curated just for you.<br><br>
+
+                Secure Checkout:<br>
+                Your personal information is safely stored, ensuring a seamless and secure shopping experience every time.<br><br></p>
+
+            <h3>Ready to Register?</h3><br>
+                <p>Become a part of our family and enjoy these amazing benefits today!</p>
         </div>
     </div>
 </section>
@@ -138,8 +172,35 @@
         </div>
     </div>
 </footer>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Show/Hide password toggle
+        $('.toggle-password').on('click', function () {
+            const target = $(this).data('target'); // Get the target input field
+            const input = $(target);
+            const type = input.attr('type') === 'password' ? 'text' : 'password';
+            input.attr('type', type); // Toggle between 'text' and 'password'
+
+            // Optionally change the icon (if needed)
+            $(this).text(type === 'password' ? '👁️' : '👁️‍🗨️');
+        });
+
+        // Validate password match on form submit
+        $('#registerForm').on('submit', function (e) {
+            const password = $('#password').val();
+            const repassword = $('#repassword').val();
+
+            if (password !== repassword) {
+                e.preventDefault(); // Stop form submission
+                $('#passwordError').show(); // Show error message
+            } else {
+                $('#passwordError').hide(); // Hide error message
+            }
+        });
+    });
+</script>
 </body>
 </html>
 

@@ -57,10 +57,21 @@ h2 {
     margin-top: 20px;
 }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 50px 20px;
+
+#section{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 50px;
+}
+
+#section1,#section2{
+    flex-basis: 48%;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
 }
 
 /* Register Section */
@@ -69,7 +80,7 @@ h2 {
     padding: 40px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 50px;
+    margin-top: 0px;
 }
 
 .register-section h2 {
@@ -102,7 +113,7 @@ h2 {
 button.btn {
     width: 100%;
     padding: 12px;
-    background-color: #007bff;
+    background-color: #ff5722;
     color: white;
     border: none;
     border-radius: 8px;
@@ -111,7 +122,33 @@ button.btn {
 }
 
 button.btn:hover {
-    background-color: #0056b3;
+    background-color: orangered;
+}
+
+
+.password-wrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.password-wrapper input {
+    flex: 1;
+    padding-right: 40px; /* Space for the toggle button */
+}
+
+.password-wrapper .toggle-password {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #555;
+}
+
+.password-wrapper .toggle-password:focus {
+    outline: none;
 }
 
 /* Login Redirect Section */
@@ -127,7 +164,7 @@ button.btn:hover {
 
 #login {
     padding: 12px 30px;
-    background-color: #28a745;
+    background-color: gray;
     color: white;
     border: none;
     border-radius: 8px;
@@ -136,16 +173,14 @@ button.btn:hover {
 }
 
 #login:hover {
-    background-color: #218838;
+    background-color: dimgrey;
 }
-
-
 
 
 /* Media Queries */
 @media (max-width: 768px) {
     .register-section {
-        padding: 30px;
+        padding: 0px;
     }
 
     .form-group input {

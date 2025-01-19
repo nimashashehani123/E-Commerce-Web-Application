@@ -113,7 +113,7 @@ button.btn:hover {
 }
 
 .registration-section #rejister:hover {
-    background-color: coral;
+    background-color: orangered;
 }
 
 @media (max-width: 768px) {
