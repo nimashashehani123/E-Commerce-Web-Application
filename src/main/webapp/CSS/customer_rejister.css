@@ -1,4 +1,4 @@
-/* General Styles */
+
 body {
     font-family: 'Arial', sans-serif;
     background-color: #f8f9fa;
@@ -134,7 +134,7 @@ button.btn:hover {
 
 .password-wrapper input {
     flex: 1;
-    padding-right: 40px; /* Space for the toggle button */
+    padding-right: 40px; /
 }
 
 .password-wrapper .toggle-password {
@@ -151,7 +151,7 @@ button.btn:hover {
     outline: none;
 }
 
-/* Login Redirect Section */
+
 .login-redirect-section {
     text-align: center;
     margin-top: 40px;
@@ -177,7 +177,6 @@ button.btn:hover {
 }
 
 
-/* Media Queries */
 @media (max-width: 768px) {
     .register-section {
         padding: 0px;

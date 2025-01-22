@@ -36,7 +36,7 @@
                     <a class="nav-link active" aria-current="page" href="index.jsp"><i class="fa-solid fa-house" style="color: #FFFFFF;"></i></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="shop.jsp"><i class="fa-solid fa-bag-shopping" style="color: #FFFFFF;"></i></a>
+                    <a class="nav-link" href="categories"><i class="fa-solid fa-bag-shopping" style="color: #FFFFFF;"></i></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="cart.jsp"><i class="fa-solid fa-cart-shopping" style="color: #FFFFFF;"></i></a>
@@ -62,7 +62,7 @@
     <!-- Login Section -->
     <div class="login-section">
         <h2>Login</h2>
-        <form action="LoginServlet" method="post">
+        <form action="user" method="post">
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" required>
