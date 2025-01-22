@@ -54,6 +54,24 @@
     </div>
   </div>
 </nav>
+<%
+  String message = request.getParameter("message");
+  String error = request.getParameter("error");
+%>
+<div id="alert-container">
+  <% if (message != null) { %>
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <%= message %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  <% } %>
+  <% if (error != null) { %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <%= error %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  <% } %>
+</div>
 
 <div class="row" style="padding: 0">
   <!-- Sidebar for Categories -->
@@ -92,9 +110,12 @@
         <!-- Display update and delete options if the user is an admin -->
         <% if ("admin".equals(userRole)) { %>
         <span>
-      <a href="updateCategoryForm?category_id=<%= category.getId() %>" class="btn btn-sm btn-warning">Update</a>
-      <a href="deleteCategory?category_id=<%= category.getId() %>" class="btn btn-sm btn-danger">Delete</a>
-    </span>
+      <a href="categories?category_id=<%= category.getId() %>" class="btn btn-sm btn-warning">Update</a>
+       <a href="#"
+          class="btn btn-danger"
+          onclick="confirmCategoryDelete('<%= category.getName() %>');">
+              Delete
+            </a> </span>
         <% } %>
       </li>
       <%
@@ -140,8 +161,12 @@
                 if (userRole.equals("admin")) {
             %>
             <!-- Admin Controls -->
-            <a href="editProduct.jsp?productId=<%= product.getId() %>" class="btn btn-warning">Edit</a>
-            <a href="deleteProductServlet?productId=<%= product.getId() %>" class="btn btn-danger">Delete</a>
+            <a href="addProduct?productId=<%= product.getId() %>" class="btn btn-warning">Edit</a>
+            <a href="#"
+               class="btn btn-danger"
+               onclick="confirmProductDelete('<%= product.getId() %>');">
+              Delete
+            </a>
             <% } %>
             <% if (product.getQtyOnHand() > 0) { %> <!-- Ensure the product is in stock -->
             <a href="addToCartServlet?productId=<%= product.getId() %>" class="btn btn-success">Add to Cart</a>
@@ -218,57 +243,74 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.min.js"></script>
 <script src="js/jquery-3.7.1.min.js"></script>
-<%--<script>
-  document.getElementById("searchButton").addEventListener("click", function () {
-    const keyword = document.getElementById("searchInput").value;
+<script>
+  function confirmProductDelete(productId) {
+    if (confirm('Are you sure you want to delete this product?')) {
+      // Create a form dynamically for POST request
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = 'addProduct'; // Common servlet URL
 
-    // Example of sending additional filters (optional)
-    const category = ""; // Add a category value dynamically if needed
-    const minPrice = ""; // Add a minimum price value if applicable
-    const maxPrice = ""; // Add a maximum price value if applicable
+      // Add hidden input for the product ID
+      const productIdInput = document.createElement('input');
+      productIdInput.type = 'hidden';
+      productIdInput.name = 'productId';
+      productIdInput.value = productId;
 
-    fetch(`http://localhost:8080/E_Commerce_Web_Application_war_exploded/search?keyword=${encodeURIComponent(keyword)}&category=${encodeURIComponent(category)}&minPrice=${minPrice}&maxPrice=${maxPrice}`)
-            .then(response => response.json())
-            .then(data => {
-              // Clear the current product display
-              const productContainer = document.querySelector(".row.row-cols-1.row-cols-sm-2.row-cols-md-3.row-cols-lg-4");
-              productContainer.innerHTML = ""; // Clear existing content
+      // Add hidden input for the action type
+      const actionInput = document.createElement('input');
+      actionInput.type = 'hidden';
+      actionInput.name = 'action';
+      actionInput.value = 'delete';
 
-              if (data && data.length > 0) {
-                data.forEach(product => {
-                  // Clear the current product display
-                  const productContainer = document.querySelector(".row.row-cols-1");
-                  productContainer.innerHTML = "";
+      form.appendChild(productIdInput);
+      form.appendChild(actionInput);
+      document.body.appendChild(form);
 
-                  // Loop through the search results and display them
-                  data.forEach(product => {
-                    const productCard = `
-                  <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-                    <div class="card">
-                      <img src="${product.imageUrl || 'https://i.pinimg.com/736x/af/3f/df/af3fdfe68325570588649fb1e21b8b91.jpg'}"
-                           class="card-img-top"
-                           alt="${product.name || 'No Name'}" width="100vw" height="100vh">
-                      <div class="card-body">
-                        <h5 class="card-title">${product.name}</h5>
-                        <p class="card-text">Price: $${product.price}</p>
-                        <p class="card-text">Qty Available: ${product.qtyOnHand}</p>
-                        <a href="addToCartServlet?productId=${product.id}" class="btn btn-success">Add to Cart</a>
-                      </div>
-                    </div>
-                  </div>`;
-                    productContainer.insertAdjacentHTML("beforeend", productCard);
-                  });
+      // Submit the form
+      form.submit();
+    }
+  }
+</script>
+<script>
+  function confirmCategoryDelete(categoryName) {
+    if (confirm('Are you sure you want to delete this category?')) {
+      // Create a form dynamically for POST request
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = 'categories'; // Common servlet URL
 
-                  // Handle cases where no products match the search
-                  if (data.length === 0) {
-                    productContainer.innerHTML = "<p>No products found.</p>";
-                  }
-                })
-                        .catch(error => console.error('Error fetching search results:', error));
-              }});
-            });
+      // Add hidden input for the product ID
+      const productIdInput = document.createElement('input');
+      productIdInput.type = 'hidden';
+      productIdInput.name = 'categoryName';
+      productIdInput.value = categoryName;
 
-</script>--%>
+      // Add hidden input for the action type
+      const actionInput = document.createElement('input');
+      actionInput.type = 'hidden';
+      actionInput.name = 'action';
+      actionInput.value = 'delete';
+
+      form.appendChild(productIdInput);
+      form.appendChild(actionInput);
+      document.body.appendChild(form);
+
+      // Submit the form
+      form.submit();
+    }
+  }
+</script>
+<script>
+    setTimeout(function () {
+    const alertContainer = document.getElementById('alert-container');
+    if (alertContainer) {
+    alertContainer.style.transition = "opacity 0.5s ease";
+    alertContainer.style.opacity = "0";
+    setTimeout(() => alertContainer.remove(), 500); // Remove it from DOM after fade-out
+  }
+  }, 2000);
+</script>
 </body>
 </html>
 
