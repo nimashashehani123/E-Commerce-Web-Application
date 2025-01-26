@@ -39,10 +39,10 @@
                     <a class="nav-link" href="categories"><i class="fa-solid fa-bag-shopping" style="color: #FFFFFF;"></i></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="cart.jsp"><i class="fa-solid fa-cart-shopping" style="color: #FFFFFF;"></i></a>
+                    <a class="nav-link" href="cart"><i class="fa-solid fa-cart-shopping" style="color: #FFFFFF;"></i></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="login.jsp"><i class="fa-solid fa-user" style="color: #FFFFFF;"></i></a>
+                    <a class="nav-link" href="user"><i class="fa-solid fa-user" style="color: #FFFFFF;"></i></a>
                 </li>
             </ul>
         </div>

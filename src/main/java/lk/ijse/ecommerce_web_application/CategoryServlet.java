@@ -28,19 +28,17 @@ public class CategoryServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        // Set content type
+
         response.setContentType("text/html");
-        // Get category_id from request parameters
+
         String categoryIdParam = request.getParameter("category_id");
         String action = request.getParameter("action");
 
-        // Check if category_id is present
+
         if (categoryIdParam != null && !categoryIdParam.isEmpty()) {
-            // Handle the case where a specific category is requested (for updating)
             try {
                 int categoryId = Integer.parseInt(categoryIdParam);
 
-                // Fetch the category by category_id
                 try (Connection conn = dataSource.getConnection()) {
                     String sql = "SELECT * FROM categories WHERE category_id = ?";
                     PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -49,19 +47,16 @@ public class CategoryServlet extends HttpServlet {
 
                     if (rs.next()) {
                         String imagePath = null;
-                        // Set the category details as request attributes to pass to the update form
+
                         request.setAttribute("categoryId", categoryId);
                         request.setAttribute("categoryName", rs.getString("category_name"));
                         String imageFileName = rs.getString("icon_url");
-                        // Construct the relative image URL (assuming images are in /uploads/)
                         imagePath = (imageFileName != null && !imageFileName.isEmpty()) ? "/uploads/" + imageFileName : "/uploads/default.jpg";
 
                         request.setAttribute("icon_url", imagePath);
 
-                        // Forward to the updateCategory.jsp page
                         request.getRequestDispatcher("updateCategory.jsp").forward(request, response);
                     } else {
-                        // Category not found
                         response.sendRedirect("categories?error=Category not found");
                     }
                 } catch (SQLException e) {
@@ -69,7 +64,6 @@ public class CategoryServlet extends HttpServlet {
                     response.sendRedirect("categories?error=Error fetching category: " + e.getMessage());
                 }
             } catch (NumberFormatException e) {
-                // Invalid category_id
                 response.sendRedirect("categories?error=Invalid category ID");
             }
         } else if(action != null && action.equals("getCategoryNames")){
@@ -96,12 +90,10 @@ public class CategoryServlet extends HttpServlet {
             List<Category> categories = new ArrayList<>();
             List<Product> products = new ArrayList<>();
 
-        // Get session and user role
         HttpSession session = request.getSession(false);
         String userRole = session != null ? (String) session.getAttribute("userRole") : null;
 
 
-        // Fetch selected category from request or default to '0' (all categories)
         String selectedCategoryName = request.getParameter("category_name") != null ? request.getParameter("category_name") : null;
 
         try (Connection connection = dataSource.getConnection()) {
@@ -112,7 +104,6 @@ public class CategoryServlet extends HttpServlet {
 
                 while (rs.next()) {
                     String imageFileName = rs.getString("icon_url");
-                    // Construct the relative image URL (assuming images are in /uploads/)
                     String imagePath = (imageFileName != null && !imageFileName.isEmpty()) ? "/uploads/" + imageFileName : "/uploads/default.jpg";
 
 
@@ -125,7 +116,6 @@ public class CategoryServlet extends HttpServlet {
                 }
             }
 
-            // Fetch products based on category filter
             String productQuery = "SELECT * FROM products WHERE (? IS NULL OR category_name = ?)";
             PreparedStatement productStmt = connection.prepareStatement(productQuery);
             productStmt.setString(1,selectedCategoryName);
@@ -133,17 +123,14 @@ public class CategoryServlet extends HttpServlet {
             ResultSet productRs = productStmt.executeQuery();
 
             while (productRs.next()) {
-                // Get the image file name from the database (image_url stores file name)
                 String imageFileName = productRs.getString("image_url");
-                // Construct the relative image URL (assuming images are in /uploads/)
                 String imagePath = (imageFileName != null && !imageFileName.isEmpty()) ? "/uploads/" + imageFileName : "/uploads/default.jpg";
 
-                // Create Product object
                 Product product = new Product(
                         productRs.getInt("product_id"),
                         productRs.getString("product_name"),
                         productRs.getDouble("price"),
-                        imagePath, // Pass the constructed image URL
+                        imagePath,
                         productRs.getInt("qtyOnHand"),
                         productRs.getString("category_name")
                 );
@@ -162,13 +149,8 @@ public class CategoryServlet extends HttpServlet {
                     (minPriceParam != null && !minPriceParam.trim().isEmpty())) {
 
                 if (products != null) {
-                    products.clear(); // Clear the existing data
+                    products.clear();
                 }
-
-               /* double maxPrice = maxPriceParam != null ? Double.parseDouble(maxPriceParam) : Double.MAX_VALUE; // Default to a very high number if not provided
-                double minPrice = minPriceParam != null ? Double.parseDouble(minPriceParam) : 0; // Default to 0 if not provided
-*/
-                // Call your service method to fetch the filtered products
 
                 List<Product> filteredProducts = getFilteredProducts(search, sortPrice, minPriceParam, maxPriceParam);
                 if (filteredProducts != null) {
@@ -192,10 +174,8 @@ public class CategoryServlet extends HttpServlet {
     public List<Product> getFilteredProducts(String search, String sortPrice, String minPriceParam, String maxPriceParam) {
         List<Product> products = new ArrayList<>();
 
-        // Base query
         String query = "SELECT * FROM products WHERE 1=1";
 
-        // Append conditions dynamically
         if (minPriceParam != null && !minPriceParam.isEmpty()) {
             query += " AND price >= ?";
         }
@@ -218,7 +198,6 @@ public class CategoryServlet extends HttpServlet {
 
             int paramIndex = 1;
 
-            // Set dynamic parameters
             if (minPriceParam != null && !minPriceParam.isEmpty()) {
                 stmt.setDouble(paramIndex++, Double.parseDouble(minPriceParam));
             }
@@ -229,7 +208,6 @@ public class CategoryServlet extends HttpServlet {
                 stmt.setString(paramIndex++, "%" + search + "%");
             }
 
-            // Execute the query
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 String imageFileName = rs.getString("image_url");
@@ -259,17 +237,14 @@ public class CategoryServlet extends HttpServlet {
         String action = req.getParameter("action");
 
         if ("save".equals(action)) {
-            // Retrieve form data
             String categoryName = req.getParameter("categoryName");
             Part imagePart = req.getPart("categoryImage");
 
             String imageFileName = imagePart.getSubmittedFileName();
 
-            // Directory to save uploaded images
             String uploadPath = getServletContext().getRealPath("/uploads/") + imageFileName;
 
             try (Connection conn = dataSource.getConnection()) {
-                // Save the uploaded image
                 try (FileOutputStream fos = new FileOutputStream(uploadPath); InputStream is = imagePart.getInputStream()) {
                     byte[] data = new byte[is.available()];
                     is.read(data);
@@ -284,7 +259,6 @@ public class CategoryServlet extends HttpServlet {
                 pstmt.setString(1, categoryName);
                 pstmt.setString(2, imageFileName);
 
-                // Execute the query
                 int rows = pstmt.executeUpdate();
                 if (rows > 0) {
                     resp.sendRedirect("categories?message=Category added successfully!");
@@ -296,7 +270,6 @@ public class CategoryServlet extends HttpServlet {
                 resp.getWriter().println("Error: " + e.getMessage());
             }
         }else if ("update".equals(action)) {
-            // Retrieve form data
             int categoryId = Integer.parseInt(req.getParameter("categoryId"));
             String categoryName = req.getParameter("categoryName");
             Part imagePart = req.getPart("categoryImage");
@@ -308,10 +281,8 @@ public class CategoryServlet extends HttpServlet {
             if (imagePart != null && imagePart.getSize() > 0) {
                 imageFileName = imagePart.getSubmittedFileName();
 
-                // Directory to save uploaded images
                 String uploadPath = getServletContext().getRealPath("/uploads/") + imageFileName;
 
-                // Save the uploaded image
                 try (FileOutputStream fos = new FileOutputStream(uploadPath); InputStream is = imagePart.getInputStream()) {
                     byte[] data = new byte[is.available()];
                     is.read(data);
@@ -323,22 +294,19 @@ public class CategoryServlet extends HttpServlet {
                 imageFileName = fileName;
             }
             try (Connection conn = dataSource.getConnection()) {
-                // SQL update query
                 String sql = "UPDATE categories SET category_name = ?,icon_url = ? WHERE category_id = ?";
                 PreparedStatement pstmt = conn.prepareStatement(sql);
 
                 pstmt.setString(1, categoryName);
 
-                // Handle image update
                 if (imageFileName != null) {
-                    pstmt.setString(2, imageFileName); // Store the image filename
+                    pstmt.setString(2, imageFileName);
                 } else {
-                    pstmt.setNull(2, java.sql.Types.VARCHAR); // If no new image is uploaded, set it to null
+                    pstmt.setNull(2, java.sql.Types.VARCHAR);
                 }
 
                 pstmt.setInt(3, categoryId);
 
-                // Execute update
                 int rows = pstmt.executeUpdate();
                 if (rows > 0) {
                     resp.sendRedirect("categories?message=Category updated successfully");
@@ -352,17 +320,14 @@ public class CategoryServlet extends HttpServlet {
         }else if ("delete".equals(action)) {
             String categoryName = req.getParameter("categoryName");
             try (Connection conn = dataSource.getConnection()) {
-                // Check if the category has associated products
                 String checkProductsSql = "SELECT COUNT(*) FROM products WHERE category_name = ?";
                 PreparedStatement checkStmt = conn.prepareStatement(checkProductsSql);
                 checkStmt.setString(1, categoryName);
                 ResultSet checkRs = checkStmt.executeQuery();
 
                 if (checkRs.next() && checkRs.getInt(1) > 0) {
-                    // If products exist for this category, don't delete it and show an alert message
                     resp.sendRedirect("categories?error=Category has associated products and cannot be deleted.");
                 } else {
-                    // If no products exist, proceed with deletion
                     String deleteSql = "DELETE FROM categories WHERE category_name = ?";
                     PreparedStatement deleteStmt = conn.prepareStatement(deleteSql);
                     deleteStmt.setString(1, categoryName);

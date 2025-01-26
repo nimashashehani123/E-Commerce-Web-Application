@@ -49,15 +49,6 @@ form.d-flex {
     }
 }
 
-/*.navbar-nav.ms-auto {
-    margin-left: auto;  !* Align navbar items to the right *!
-}
-
-.navbar-nav.ms-auto .nav-link {
-    font-size: 1rem; !* Reduce font size of nav items *!
-    margin-left: 1rem; !* Adjust the spacing between nav items *!
-}*/
-
 footer {
     background-color: #212529;
     color: white;
@@ -137,4 +128,32 @@ html {
     width: 75px;
     height: 75px;
 }
+
+#addcategory,#addproduct{
+    background: linear-gradient(135deg, #ff416c, #ff4b2b); /* Gradient that complements the website background */
+    color: white;
+    font-size: 13px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 35px; /* Rounded corners for a modern look */
+    text-align: center;
+    display: inline-block;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    transition: all 0.3s ease; /* Smooth transition for hover and active states */
+}
+
+#addcategory:hover ,#addproduct:hover{
+    background: linear-gradient(135deg, #ff4b2b, #ff416c); /* Hover gradient effect */
+    transform: translateY(-3px); /* Slight lift effect on hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* More prominent shadow on hover */
+}
+
+#addcategory:active, #addproduc:active{
+    transform: translateY(1px); /* Pressed effect */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow reset on active state */
+}
+
 

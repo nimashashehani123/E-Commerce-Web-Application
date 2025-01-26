@@ -54,16 +54,27 @@
       <!-- Navigation Items -->
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="index.jsp"><i class="fa-solid fa-house" style="color: #FFFFFF;"></i></a>
+          <a class="nav-link active" aria-current="page" href="index.jsp">
+            <i class="fa-solid fa-house" style="color: #FFFFFF;"></i>
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="categories"><i class="fa-solid fa-bag-shopping" style="color: #FFFFFF;"></i></a>
+          <a class="nav-link" href="categories">
+            <i class="fa-solid fa-bag-shopping" style="color: #FFFFFF;"></i>
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="cart"><i class="fa-solid fa-cart-shopping" style="color: #FFFFFF;"></i></a>
+          <a class="nav-link" href="cart">
+            <i class="fa-solid fa-cart-shopping" style="color: #FFFFFF;"></i>
+            <span class="badge bg-danger" id="cart-count">
+        <%= session.getAttribute("cartItemCount") != null ? session.getAttribute("cartItemCount") : 0 %>
+      </span>
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="user"><i class="fa-solid fa-user" style="color: #FFFFFF;"></i></a>
+          <a class="nav-link" href="user">
+            <i class="fa-solid fa-user" style="color: #FFFFFF;"></i>
+          </a>
         </li>
       </ul>
 
@@ -91,7 +102,7 @@
   <% } %>
 </div>
 
-<div class="row" id="row" style="padding: 50px; overflow-x: auto; white-space: nowrap;scrollbar-width: none;">
+<div class="row" id="row" style="padding: 50px; overflow-x: auto; white-space: nowrap;scrollbar-width: none; background-color: mintcream">
   <!-- Categories Sidebar (Horizontally Scrollable) -->
   <div class="d-flex" style="display: flex; flex-wrap: nowrap; gap: 15px;">
     <!-- Dynamically Loaded Categories -->
@@ -103,7 +114,7 @@
     <!-- Add Category Option for Admin -->
     <% if ("admin".equals(userRole)) { %>
     <div class="category-item text-center" style="flex: 0 0 auto; min-width: 200px;">
-      <a href="category_manage.jsp" class="btn btn-primary btn-block">Add Category</a>
+      <a href="category_manage.jsp" class="btn btn-primary btn-block" id="addcategory">Add Category</a>
     </div>
     <% } %>
 
@@ -111,7 +122,7 @@
     <% if (categories != null && !categories.isEmpty()) {
       %>
     <div class="category-item text-center" style="min-width: 140px;">
-      <a href="categories?"><img src="https://i.pinimg.com/736x/70/06/67/70066731ebc0e43d97d37c2411c20d10.jpg" alt="All Products" class="rounded-circle" width="75" height="75"> </a>
+      <a href="categories?"><img src="https://i.pinimg.com/736x/56/48/dc/5648dcdd6c091c4e3f18dd75b749f44b.jpg" alt="All Products" class="rounded-circle" width="75" height="75"> </a>
     <div>All Products</div>
     </div>
     <%
@@ -154,7 +165,7 @@
         String action = "getCategoryNames";
     %>
     <div class="mb-3">
-      <a href="categories?action=<%=action%>" class="btn btn-primary">Add Product</a>
+      <a href="categories?action=<%=action%>" class="btn btn-primary" id="addproduct">Add Product</a>
     </div>
     <% } %>
 
@@ -171,7 +182,7 @@
                width="220vw" height="200vh">
           <div class="card-body">
             <h5 class="card-title"><%= product.getName() %></h5>
-            <p class="card-text">Price: Rs.<%= product.getPrice() %></p>
+            <p class="card-text" style="color: #ff5722">Price: Rs.<%= product.getPrice() %></p>
             <p class="card-text">Qty Available: <%= product.getQtyOnHand() %></p>
             <%
               if (userRole != null) {
@@ -187,18 +198,22 @@
             <% } %>
             <% if (product.getQtyOnHand() > 0) { %>
           <% if (userRole.equals("customer")) { %>
-           <%-- <a href="addToCart?productId=<%= product.getId() %>" class="btn btn-success">Add to Cart</a>--%>
           <form action="addToCart" method="post">
             <input type="hidden" name="productId" value="<%= product.getId() %>">
             <input type="hidden" name="quantity" value="1"> <!-- Default quantity -->
-            <button type="submit" class="btn"><i class="fa-solid fa-cart-plus" style="color: #000000;"></i></button>
+            <button type="submit" class="btn"><i class="fa-solid fa-cart-plus" style="color:#4CAF50;"></i></button>
           </form>
             <% } %>
-          <% } else { %>
+          <% }else{%>
+            <% System.out.println("disddwfsdfsdf");%>
             <button class="btn btn-secondary" disabled>Out of Stock</button>
             <% } %>
             <% } else { %>
-            <a href="login.jsp" class="btn"><i class="fa-solid fa-cart-plus" style="color: #000000;"></i></a>
+            <% if (product.getQtyOnHand() < 0) {%>
+            <% System.out.println("disddwfsdfsdf");%>
+            <button class="btn btn-secondary" disabled>Out of Stock</button>
+            <% } %>
+            <a href="login.jsp" class="btn"><i class="fa-solid fa-cart-plus" style="color: #4CAF50;"></i></a>
             <% } %>
           </div>
         </div>

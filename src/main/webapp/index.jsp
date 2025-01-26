@@ -34,7 +34,12 @@
           <a class="nav-link" href="categories"><i class="fa-solid fa-bag-shopping" style="color: #FFFFFF;"></i></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="cart"><i class="fa-solid fa-cart-shopping" style="color: #FFFFFF;"></i></a>
+          <a class="nav-link" href="cart">
+            <i class="fa-solid fa-cart-shopping" style="color: #FFFFFF;"></i>
+            <span class="badge bg-danger" id="cart-count">
+        <%= session.getAttribute("cartItemCount") != null ? session.getAttribute("cartItemCount") : 0 %>
+      </span>
+          </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="user"><i class="fa-solid fa-user" style="color: #FFFFFF;"></i></a>
@@ -57,7 +62,7 @@
     <div class="scroll-container">
       <!-- Card 1 -->
       <div class="card shadow border-0">
-        <img src="https://i.pinimg.com/736x/af/3f/df/af3fdfe68325570588649fb1e21b8b91.jpg" class="card-img-top" alt="Trendy Outfits">
+        <img src="https://i.pinimg.com/736x/d0/1a/0a/d01a0a3d4cf6536203dfc0c2213b7470.jpg" class="card-img-top" alt="Trendy Outfits">
         <div class="card-body">
           <h5 class="card-title text-center">Trendy Outfits</h5>
           <h6 class="card-text text-center">Explore the latest styles <br>and make a statement with our unique<br> collection.</h6>
@@ -66,7 +71,7 @@
 
       <!-- Card 2 -->
       <div class="card shadow border-0">
-        <img src="https://i.pinimg.com/736x/65/a1/08/65a10893a8b9c866631b000549167376.jpg" class="card-img-top" alt="Seasonal Trends">
+        <img src="https://i.pinimg.com/736x/af/3f/df/af3fdfe68325570588649fb1e21b8b91.jpg" class="card-img-top" alt="Seasonal Trends">
         <div class="card-body">
           <h5 class="card-title text-center">Seasonal Trends</h5>
           <h6 class="card-text text-center">Stay ahead of the fashion <br>curve with clothing tailored for<br> every season.</h6>

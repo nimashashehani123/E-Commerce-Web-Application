@@ -21,13 +21,10 @@ public class AddToCartServlet extends HttpServlet {
     private DataSource dataSource;
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("inside post");
+
         int userId = Integer.parseInt(request.getSession().getAttribute("user_id").toString());
         int productId = Integer.parseInt(request.getParameter("productId"));
         int quantity = Integer.parseInt(request.getParameter("quantity"));
-        System.out.println(userId);
-        System.out.println(productId);
-        System.out.println(quantity);
 
         try (Connection conn = dataSource.getConnection()){
             String checkQuery = "SELECT quantity FROM cart WHERE user_id = ? AND product_id = ?";
@@ -37,7 +34,7 @@ public class AddToCartServlet extends HttpServlet {
                 ResultSet rs = checkStmt.executeQuery();
 
                 if (rs.next()) {
-                    // Product exists, update the quantity
+
                     int newQuantity = rs.getInt("quantity") + quantity;
                     String updateQuery = "UPDATE cart SET quantity = ? WHERE user_id = ? AND product_id = ?";
                     try (PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
@@ -47,7 +44,7 @@ public class AddToCartServlet extends HttpServlet {
                         updateStmt.executeUpdate();
                     }
                 } else {
-                    // Product does not exist, insert a new record
+
                     String insertQuery = "INSERT INTO cart (user_id, product_id, quantity) VALUES (?, ?, ?)";
                     try (PreparedStatement insertStmt = conn.prepareStatement(insertQuery)) {
                         insertStmt.setInt(1, userId);
@@ -56,10 +53,23 @@ public class AddToCartServlet extends HttpServlet {
                         insertStmt.executeUpdate();
                     }
                 }
+
+                String countQuery = "SELECT SUM(quantity) AS totalItems FROM cart WHERE user_id = ?";
+                try (PreparedStatement countStmt = conn.prepareStatement(countQuery)) {
+                    countStmt.setInt(1, userId);
+                    ResultSet countRs = countStmt.executeQuery();
+
+                    if (countRs.next()) {
+                        int cartItemCount = countRs.getInt("totalItems");
+                        HttpSession session = request.getSession();
+                        session.setAttribute("cartItemCount", cartItemCount);
+                    }
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
 
         // Redirect back to the shop page
         response.sendRedirect("categories");

@@ -118,7 +118,6 @@ public class ProductServlet extends HttpServlet {
         }
         else if ("update".equals(action)) {
 
-            // Retrieve form data
             int productId = Integer.parseInt(request.getParameter("productId"));
             String productName = request.getParameter("productName");
             double price = Double.parseDouble(request.getParameter("price"));
@@ -133,10 +132,8 @@ public class ProductServlet extends HttpServlet {
             if (file != null && file.getSize() > 0) {
                 imageFileName = file.getSubmittedFileName();
 
-                // Directory to save uploaded images
                 String uploadPath = getServletContext().getRealPath("/uploads/") + imageFileName;
 
-                // Save the uploaded image
                 try (FileOutputStream fos = new FileOutputStream(uploadPath); InputStream is = file.getInputStream()) {
                     byte[] data = new byte[is.available()];
                     is.read(data);
@@ -149,7 +146,6 @@ public class ProductServlet extends HttpServlet {
             }
 
             try (Connection conn = dataSource.getConnection()) {
-                // SQL update query
                 String sql = "UPDATE products SET product_name = ?, price = ?, category_name = ?, qtyOnHand = ?, image_url = ? WHERE product_id = ?";
                 PreparedStatement pstmt = conn.prepareStatement(sql);
 
@@ -158,16 +154,14 @@ public class ProductServlet extends HttpServlet {
                 pstmt.setString(3, categoryName);
                 pstmt.setInt(4, qtyOnHand);
 
-                // Handle image update
                 if (imageFileName != null) {
-                    pstmt.setString(5, imageFileName); // Store the image filename
+                    pstmt.setString(5, imageFileName);
                 } else {
-                    pstmt.setNull(5, java.sql.Types.VARCHAR); // If no new image is uploaded, set it to null
+                    pstmt.setNull(5, java.sql.Types.VARCHAR);
                 }
 
                 pstmt.setInt(6, productId);
 
-                // Execute update
                 int rows = pstmt.executeUpdate();
                 if (rows > 0) {
                     response.sendRedirect("categories?message=Product updated successfully");
