@@ -1,4 +1,5 @@
-<%--
+<%@ page import="lk.ijse.ecommerce_web_application.Dto.Category" %>
+<%@ page import="java.util.List" %><%--
   Created by IntelliJ IDEA.
   User: Nimasha Shehani
   Date: 21/01/2025
@@ -49,6 +50,26 @@
   </div>
 </nav>
 
+
+<%
+  String message = request.getParameter("message");
+  String error = request.getParameter("error");
+%>
+<div id="alert-container">
+  <% if (message != null) { %>
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <%= message %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  <% } %>
+  <% if (error != null) { %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <%= error %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  <% } %>
+</div>
+
 <form action="addProduct" method="post" enctype="multipart/form-data">
   <input type="hidden" name="action" value="save">
   <div class="form-group">
@@ -61,8 +82,20 @@
   </div>
   <div class="form-group">
     <label for="categoryName">Category Name:</label>
-    <input type="text" id="categoryName" name="categoryName" class="form-control" required>
+    <select id="categoryName" name="categoryName" class="form-control" required>
+      <option value="" disabled selected>Select a category</option>
+      <%
+        List<String> categories = (List<String>) request.getAttribute("categoryNames");
+        if (categories != null && !categories.isEmpty()) { %>
+      <% for (String category : categories) { %>
+      <option value="<%= category%>"><%= category%></option>
+      <% } %>
+      <% } else { %>
+      <option value="" disabled>No categories available</option>
+      <% } %>
+    </select>
   </div>
+
   <div class="form-group">
     <label for="qtyOnHand">Quantity on Hand:</label>
     <input type="number" id="qtyOnHand" name="qtyOnHand" class="form-control" required>

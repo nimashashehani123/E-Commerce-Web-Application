@@ -32,11 +32,26 @@
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <form class="d-flex" id="searchForm">
-      <input class="form-control me-2" type="text" id="searchInput" placeholder="Search products..." aria-label="Search">
-      <button class="btn btn-outline-light" type="button" id="searchButton">Search</button>
-    </form>
     <div class="collapse navbar-collapse" id="navbarNav">
+      <!-- Search & Filters Section -->
+      <form class="d-flex ms-3" id="search-filter-form">
+        <!-- Search Input -->
+        <input class="form-control me-2" type="search" id="search-input" placeholder="Search products" aria-label="Search" onkeyup="filterProducts()">
+
+        <!-- Sort by Price -->
+        <select class="form-select" id="price-sort" onchange="sortByPrice()">
+          <option value="">Sort by Price</option>
+          <option value="low-to-high">Low to High</option>
+          <option value="high-to-low">High to Low</option>
+        </select>
+
+        <!-- Price Range Filter -->
+        <input type="number" class="form-control me-2" id="min-price" placeholder="Min Price" onchange="filterByPrice()">
+        <input type="number" class="form-control me-2" id="max-price" placeholder="Max Price" onchange="filterByPrice()">
+      </form>
+
+
+      <!-- Navigation Items -->
       <ul class="navbar-nav ms-auto">
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="index.jsp"><i class="fa-solid fa-house" style="color: #FFFFFF;"></i></a>
@@ -45,15 +60,18 @@
           <a class="nav-link" href="categories"><i class="fa-solid fa-bag-shopping" style="color: #FFFFFF;"></i></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="cart.jsp"><i class="fa-solid fa-cart-shopping" style="color: #FFFFFF;"></i></a>
+          <a class="nav-link" href="cart"><i class="fa-solid fa-cart-shopping" style="color: #FFFFFF;"></i></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="login.jsp"><i class="fa-solid fa-user" style="color: #FFFFFF;"></i></a>
+          <a class="nav-link" href="user"><i class="fa-solid fa-user" style="color: #FFFFFF;"></i></a>
         </li>
       </ul>
+
     </div>
   </div>
 </nav>
+
+
 <%
   String message = request.getParameter("message");
   String error = request.getParameter("error");
@@ -73,73 +91,70 @@
   <% } %>
 </div>
 
-<div class="row" style="padding: 0">
-  <!-- Sidebar for Categories -->
-  <div class="col-lg-3 col-md-4 col-sm-12">
-    <h4>Categories</h4>
-    <!-- Add Category Option for Admin -->
+<div class="row" id="row" style="padding: 50px; overflow-x: auto; white-space: nowrap;scrollbar-width: none;">
+  <!-- Categories Sidebar (Horizontally Scrollable) -->
+  <div class="d-flex" style="display: flex; flex-wrap: nowrap; gap: 15px;">
+    <!-- Dynamically Loaded Categories -->
     <%
-      String userRole = (String) session.getAttribute("userRole"); // Get the user role
-      if ("admin".equals(userRole)) { %>
-    <div class="mb-3">
+      String userRole = (String) session.getAttribute("userRole");
+      List<Category> categories = (List<Category>) request.getAttribute("categories");
+    %>
+
+    <!-- Add Category Option for Admin -->
+    <% if ("admin".equals(userRole)) { %>
+    <div class="category-item text-center" style="flex: 0 0 auto; min-width: 200px;">
       <a href="category_manage.jsp" class="btn btn-primary btn-block">Add Category</a>
     </div>
     <% } %>
-    <ul class="list-group">
-      <!-- Categories loaded dynamically from the database -->
-      <%
-        List<Category> categories = (List<Category>) request.getAttribute("categories");
 
-        if (categories != null && !categories.isEmpty()) {
+    <!-- Categories List -->
+    <% if (categories != null && !categories.isEmpty()) {
       %>
-      <li class="list-group-item">
-        <img src="https://i.pinimg.com/736x/70/06/67/70066731ebc0e43d97d37c2411c20d10.jpg" class="rounded-circle me-2" width="50" height="50">
-        <a href="categories">All Products</a>
-      </li>
-      <%
-        for (Category category : categories) {
-      %>
-      <li class="list-group-item d-flex justify-content-between align-items-center">
-        <div class="d-flex align-items-center">
-          <!-- Display category image -->
-          <img src="data:image/jpeg;base64,<%= category.getIconUrl() %>" alt="<%= category.getName() %> Image" class="rounded-circle me-2" width="50" height="50">
-          <a href="categories?category_name=<%= category.getName() %>">
-            <%= category.getName() %>
-          </a>
-        </div>
-        <!-- Display update and delete options if the user is an admin -->
-        <% if ("admin".equals(userRole)) { %>
-        <span>
-      <a href="categories?category_id=<%= category.getId() %>" class="btn btn-sm btn-warning">Update</a>
-       <a href="#"
-          class="btn btn-danger"
-          onclick="confirmCategoryDelete('<%= category.getName() %>');">
-              Delete
-            </a> </span>
-        <% } %>
-      </li>
-      <%
-        }
-      } else {
-      %>
-      <li class="list-group-item">No categories available</li>
-      <%
-        }
-      %>
-    </ul>
+    <div class="category-item text-center" style="min-width: 140px;">
+      <a href="categories?"><img src="https://i.pinimg.com/736x/70/06/67/70066731ebc0e43d97d37c2411c20d10.jpg" alt="All Products" class="rounded-circle" width="75" height="75"> </a>
+    <div>All Products</div>
+    </div>
+    <%
+      for (Category category : categories) {
+    %>
+    <div class="category-item text-center" style="flex: 0 0 auto; min-width: 140px;">
+      <a href="categories?category_name=<%= category.getName() %>"><img src="<%= request.getContextPath() + category.getIconUrl() %>" alt="<%= category.getName() %> Image" class="rounded-circle" width="75" height="75">
+      </a>
+      <div><%= category.getName() %></div>
+      <!-- Update and Delete Buttons for Admin -->
+      <% if ("admin".equals(userRole)) { %>
+      <div>
+        <a href="categories?category_id=<%= category.getId() %>" class="btn btn-sm">
+          <i class="fa-solid fa-pen-to-square" style="color: green;"></i>
+        </a>
+        <a href="#" class="btn btn-sm" onclick="confirmCategoryDelete('<%= category.getName() %>');">
+          <i class="fa-solid fa-trash-can" style="color: red;"></i>
+        </a>
+      </div>
+      <% } %>
+    </div>
+    <%
+      }
+    } else {
+    %>
+    <div class="category-item text-center" style="flex: 0 0 auto; min-width: 250px;">
+      <p>No categories available</p>
+    </div>
+    <% } %>
   </div>
+</div>
+
+
 
 
   <!-- Products Section -->
-  <div class="col-lg-9 col-md-8 col-sm-12">
-    <h4>Products</h4>
-
+  <div class="col-lg-12 col-md-8 col-sm-12" style="padding: 30px" id="products-container">
     <%
-      // Display "Add Product" button if user is an admin
       if ("admin".equals(userRole)) {
+        String action = "getCategoryNames";
     %>
     <div class="mb-3">
-      <a href="addProduct.jsp" class="btn btn-primary">Add Product</a>
+      <a href="categories?action=<%=action%>" class="btn btn-primary">Add Product</a>
     </div>
     <% } %>
 
@@ -149,32 +164,41 @@
         if (products != null && !products.isEmpty()) {
           for (Product product : products) {
       %>
-      <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-        <div class="card" style="padding-right: 0">
-          <img src="data:image/jpeg;base64,<%= product.getBase64Image() %>" alt="<%= product.getName() %>" width="200vw" height="200vh" style="margin-left:5vw">
+      <div class="col-lg-2 col-md-4 col-sm-6 mb-4">
+        <div class="card">
+          <img src="<%= request.getContextPath() + product.getImageUrl() %>"
+               alt="<%= product.getName() %>"
+               width="220vw" height="200vh">
           <div class="card-body">
             <h5 class="card-title"><%= product.getName() %></h5>
-            <p class="card-text">Price: $<%= product.getPrice() %></p>
+            <p class="card-text">Price: Rs.<%= product.getPrice() %></p>
             <p class="card-text">Qty Available: <%= product.getQtyOnHand() %></p>
             <%
               if (userRole != null) {
                 if (userRole.equals("admin")) {
             %>
             <!-- Admin Controls -->
-            <a href="addProduct?productId=<%= product.getId() %>" class="btn btn-warning">Edit</a>
+            <a href="addProduct?productId=<%= product.getId() %>" class="btn btn-sm" alt="update"><i class="fa-solid fa-pen-to-square" style="color: green;"></i></a>
             <a href="#"
-               class="btn btn-danger"
+               class="btn btn-sm" alt="delete"
                onclick="confirmProductDelete('<%= product.getId() %>');">
-              Delete
+              <i class="fa-solid fa-trash-can" style="color: red;"></i>
             </a>
             <% } %>
-            <% if (product.getQtyOnHand() > 0) { %> <!-- Ensure the product is in stock -->
-            <a href="addToCartServlet?productId=<%= product.getId() %>" class="btn btn-success">Add to Cart</a>
-            <% } else { %>
+            <% if (product.getQtyOnHand() > 0) { %>
+          <% if (userRole.equals("customer")) { %>
+           <%-- <a href="addToCart?productId=<%= product.getId() %>" class="btn btn-success">Add to Cart</a>--%>
+          <form action="addToCart" method="post">
+            <input type="hidden" name="productId" value="<%= product.getId() %>">
+            <input type="hidden" name="quantity" value="1"> <!-- Default quantity -->
+            <button type="submit" class="btn"><i class="fa-solid fa-cart-plus" style="color: #000000;"></i></button>
+          </form>
+            <% } %>
+          <% } else { %>
             <button class="btn btn-secondary" disabled>Out of Stock</button>
             <% } %>
             <% } else { %>
-            <a href="login.jsp" class="btn btn-primary">Add to Cart</a>
+            <a href="login.jsp" class="btn"><i class="fa-solid fa-cart-plus" style="color: #000000;"></i></a>
             <% } %>
           </div>
         </div>
@@ -186,7 +210,7 @@
     <% } %>
   </div>
 
-</div>
+
 
 <!-- Footer -->
 <footer class="bg-dark text-white pt-5 pb-3" style="font-family: Candara">
@@ -243,6 +267,52 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.min.js"></script>
 <script src="js/jquery-3.7.1.min.js"></script>
+<script>
+  function filterProducts() {
+    // Get the values of the filters
+    const search = document.getElementById('search-input').value;
+    const sortBy = document.getElementById('price-sort').value;
+    const minPrice = document.getElementById('min-price').value || 0;
+    const maxPrice = document.getElementById('max-price').value || 100000;
+
+    console.log(sortBy);
+
+    // Create the AJAX request
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', 'categories?search=' + encodeURIComponent(search) + '&sortPrice=' + encodeURIComponent(sortBy) + '&minPrice=' + encodeURIComponent(minPrice) + '&maxPrice=' + encodeURIComponent(maxPrice), true);
+
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        // Parse the response and update only the #products-container part
+        const response = xhr.responseText;
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = response;
+
+        // Get the updated products container from the response
+        const updatedProducts = tempDiv.querySelector('#products-container');
+        // Replace the content of the current products container with the updated one
+        document.getElementById('products-container').innerHTML = updatedProducts.innerHTML;
+      } else {
+        console.error('Error:', xhr.status, xhr.statusText);
+      }
+    };
+
+    // Send the request to the server
+    xhr.send();
+  }
+
+
+  function sortByPrice() {
+    // Trigger filtering when sorting by price
+    filterProducts();
+  }
+
+  function filterByPrice() {
+    // Trigger filtering when the price range filter is changed
+    filterProducts();
+  }
+
+</script>
 <script>
   function confirmProductDelete(productId) {
     if (confirm('Are you sure you want to delete this product?')) {
@@ -309,7 +379,7 @@
     alertContainer.style.opacity = "0";
     setTimeout(() => alertContainer.remove(), 500); // Remove it from DOM after fade-out
   }
-  }, 2000);
+  }, 3000);
 </script>
 </body>
 </html>

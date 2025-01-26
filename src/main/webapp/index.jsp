@@ -34,10 +34,10 @@
           <a class="nav-link" href="categories"><i class="fa-solid fa-bag-shopping" style="color: #FFFFFF;"></i></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="cart.jsp"><i class="fa-solid fa-cart-shopping" style="color: #FFFFFF;"></i></a>
+          <a class="nav-link" href="cart"><i class="fa-solid fa-cart-shopping" style="color: #FFFFFF;"></i></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="login.jsp"><i class="fa-solid fa-user" style="color: #FFFFFF;"></i></a>
+          <a class="nav-link" href="user"><i class="fa-solid fa-user" style="color: #FFFFFF;"></i></a>
         </li>
       </ul>
     </div>
@@ -51,7 +51,7 @@
     <!-- Title and Description -->
     <h1 class="display-4">Discover Fashion Like Never Before</h1>
     <p class="lead">Your destination for trendy, stylish, and affordable clothing.</p>
-    <a href="shop.jsp" class="btn btn-lg mb-5">Shop Now</a>
+    <a href="categories" class="btn btn-lg mb-5">Shop Now</a>
 
     <!-- Scrollable Cards Section -->
     <div class="scroll-container">

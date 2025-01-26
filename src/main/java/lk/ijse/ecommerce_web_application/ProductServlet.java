@@ -12,9 +12,12 @@ import jakarta.servlet.http.Part;
 import lk.ijse.ecommerce_web_application.Dto.Product;
 
 import javax.sql.DataSource;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -28,18 +31,16 @@ public class ProductServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Get productId from request parameter
         int productId = Integer.parseInt(request.getParameter("productId"));
 
-        // Variables to hold product data
         String productName = null;
         double price = 0.0;
         String categoryName = null;
         int qtyOnHand = 0;
-        String base64Image = null;
+        String imagePath = null;
 
         try (Connection conn = dataSource.getConnection()) {
-            // Query to fetch product details
+
             String sql = "SELECT * FROM products WHERE product_id = ?";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, productId);
@@ -51,11 +52,9 @@ public class ProductServlet extends HttpServlet {
                 categoryName = rs.getString("category_name");
                 qtyOnHand = rs.getInt("qtyOnHand");
 
-                // Convert image blob to Base64
-                byte[] imageBytes = rs.getBytes("image_url");
-                if (imageBytes != null) {
-                    base64Image = Base64.getEncoder().encodeToString(imageBytes);
-                }
+                String imageFileName = rs.getString("image_url");
+                imagePath = (imageFileName != null && !imageFileName.isEmpty()) ? "/uploads/" + imageFileName : "/uploads/default.jpg";
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -66,9 +65,8 @@ public class ProductServlet extends HttpServlet {
         request.setAttribute("price", price);
         request.setAttribute("categoryName", categoryName);
         request.setAttribute("qtyOnHand", qtyOnHand);
-        request.setAttribute("base64Image", base64Image);
+        request.setAttribute("imagePath", imagePath);
 
-        // Forward to editProduct.jsp
         RequestDispatcher dispatcher = request.getRequestDispatcher("updateProduct.jsp");
         dispatcher.forward(request, response);
     }
@@ -80,43 +78,45 @@ public class ProductServlet extends HttpServlet {
 
         if ("save".equals(action)) {
             String productName = request.getParameter("productName");
-        String price = request.getParameter("price");
-        String categoryName = request.getParameter("categoryName");
-        String qtyOnHand = request.getParameter("qtyOnHand");
-        Part imagePart = request.getPart("productImage"); // File upload
+            String price = request.getParameter("price");
+            String categoryName = request.getParameter("categoryName");
+            String qtyOnHand = request.getParameter("qtyOnHand");
+            Part file = request.getPart("productImage"); // File upload
 
-        try (Connection conn = dataSource.getConnection()) {
-            // SQL query for inserting the product
-            String sql = "INSERT INTO products (product_name, price, image_url, category_name, qtyOnHand) VALUES (?, ?, ?, ?, ?)";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+            String imageFileName = file.getSubmittedFileName();
+            String uploadPath = getServletContext().getRealPath("/uploads/") + imageFileName;
 
-            // Set parameters for the prepared statement
-            pstmt.setString(1, productName);
-            pstmt.setDouble(2, Double.parseDouble(price));
-            pstmt.setString(4, categoryName);
-            pstmt.setInt(5, Integer.parseInt(qtyOnHand));
+            try (Connection conn = dataSource.getConnection()) {
+                try (FileOutputStream fos = new FileOutputStream(uploadPath); InputStream is = file.getInputStream()) {
+                    byte[] data = new byte[is.available()];
+                    is.read(data);
+                    fos.write(data);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-            // Read image data as InputStream and set it in the query
-            if (imagePart != null && imagePart.getSize() > 0) {
-                InputStream imageStream = imagePart.getInputStream();
-                pstmt.setBinaryStream(3, imageStream, (int) imagePart.getSize());
-            } else {
-                pstmt.setNull(3, java.sql.Types.BLOB); // Handle case with no image
+                String sql = "INSERT INTO products (product_name, price, image_url, category_name, qtyOnHand) VALUES (?, ?, ?, ?, ?)";
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+
+                pstmt.setString(1, productName);
+                pstmt.setDouble(2, Double.parseDouble(price));
+                pstmt.setString(3, imageFileName);
+                pstmt.setString(4, categoryName);
+                pstmt.setInt(5, Integer.parseInt(qtyOnHand));
+
+
+                int rows = pstmt.executeUpdate();
+                if (rows > 0) {
+                    response.sendRedirect("categories?message=Product added successfully!");
+                } else {
+                    response.sendRedirect("categories?error=Failed to add product.");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.getWriter().println("Error: " + e.getMessage());
             }
-
-            // Execute the query
-            int rows = pstmt.executeUpdate();
-            if (rows > 0) {
-                response.sendRedirect("categories?message=Product added successfully!");
-            } else {
-                response.sendRedirect("categories?error=Failed to add product.");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.getWriter().println("Error: " + e.getMessage());
         }
-        }else if ("update".equals(action)) {
-
+        else if ("update".equals(action)) {
 
             // Retrieve form data
             int productId = Integer.parseInt(request.getParameter("productId"));
@@ -124,7 +124,29 @@ public class ProductServlet extends HttpServlet {
             double price = Double.parseDouble(request.getParameter("price"));
             String categoryName = request.getParameter("categoryName");
             int qtyOnHand = Integer.parseInt(request.getParameter("qtyOnHand"));
-            Part imagePart = request.getPart("productImage");
+            Part file = request.getPart("productImage"); // File upload
+            String filePath = request.getParameter("FileName");
+            String fileName = filePath.replace("/uploads/","");
+
+            String imageFileName ;
+
+            if (file != null && file.getSize() > 0) {
+                imageFileName = file.getSubmittedFileName();
+
+                // Directory to save uploaded images
+                String uploadPath = getServletContext().getRealPath("/uploads/") + imageFileName;
+
+                // Save the uploaded image
+                try (FileOutputStream fos = new FileOutputStream(uploadPath); InputStream is = file.getInputStream()) {
+                    byte[] data = new byte[is.available()];
+                    is.read(data);
+                    fos.write(data);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }else {
+                imageFileName = fileName;
+            }
 
             try (Connection conn = dataSource.getConnection()) {
                 // SQL update query
@@ -137,11 +159,10 @@ public class ProductServlet extends HttpServlet {
                 pstmt.setInt(4, qtyOnHand);
 
                 // Handle image update
-                if (imagePart != null && imagePart.getSize() > 0) {
-                    InputStream imageStream = imagePart.getInputStream();
-                    pstmt.setBinaryStream(5, imageStream, (int) imagePart.getSize());
+                if (imageFileName != null) {
+                    pstmt.setString(5, imageFileName); // Store the image filename
                 } else {
-                    pstmt.setNull(5, java.sql.Types.BLOB);
+                    pstmt.setNull(5, java.sql.Types.VARCHAR); // If no new image is uploaded, set it to null
                 }
 
                 pstmt.setInt(6, productId);
@@ -149,15 +170,16 @@ public class ProductServlet extends HttpServlet {
                 // Execute update
                 int rows = pstmt.executeUpdate();
                 if (rows > 0) {
-                    response.sendRedirect("updateProduct.jsp?message=Product updated successfully");
+                    response.sendRedirect("categories?message=Product updated successfully");
                 } else {
-                    response.sendRedirect("updateProduct.jsp?productId=" + productId + "&error=Failed to update product");
+                    response.sendRedirect("categories?error=Failed to update product");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                response.sendRedirect("updateProduct.jsp?productId=" + productId + "&error=Error occurred");
+                response.sendRedirect("categories?error=Error occurred");
             }
-        }else if ("delete".equals(action)) {
+        }
+      else if ("delete".equals(action)) {
             // Delete product
             int productId = Integer.parseInt(request.getParameter("productId"));
             try (Connection conn = dataSource.getConnection()) {

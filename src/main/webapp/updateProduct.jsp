@@ -91,6 +91,8 @@
         <label for="qtyOnHand">Quantity on Hand:</label>
         <input type="number" id="qtyOnHand" name="qtyOnHand" class="form-control" value="${qtyOnHand}" required>
     </div>
+    <!-- Hidden field to hold the file name -->
+    <input type="hidden" id="hiddenFileName" name="FileName" value="${imagePath}">
     <div class="form-group">
         <label for="productImage">Product Image:</label>
         <input type="file" id="productImage" name="productImage" class="form-control" accept="image/*">
@@ -98,13 +100,9 @@
             <!-- Placeholder for image preview -->
             <label>Image Preview:</label>
             <div id="imagePreview" style="margin-top: 10px;">
-                <img id="preview" src="" alt="No Image Selected" style="max-width: 100%; height: auto; display: none;">
+                <img id="preview" src="<%= request.getContextPath() + request.getAttribute("imagePath") %>" alt="No Image Selected" style="max-width: 100%; height: auto;">
             </div>
         </div>
-        <% if (request.getAttribute("base64Image") != null) { %>
-        <p>Current Image:</p>
-        <img src="data:image/png;base64,<%= request.getAttribute("base64Image") %>" alt="Product Image" style="max-width: 100px;">
-        <% } %>
     </div>
     <button type="submit" class="btn btn-success">Update Product</button>
 </form>
@@ -195,7 +193,7 @@
             alertContainer.style.opacity = "0";
             setTimeout(() => alertContainer.remove(), 500); // Remove it from DOM after fade-out
         }
-    }, 2000);
+    }, 3000);
 </script>
 
 </body>

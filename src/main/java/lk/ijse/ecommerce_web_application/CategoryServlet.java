@@ -10,6 +10,7 @@ import lk.ijse.ecommerce_web_application.Dto.Category;
 import lk.ijse.ecommerce_web_application.Dto.Product;
 
 import javax.sql.DataSource;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
@@ -31,6 +32,7 @@ public class CategoryServlet extends HttpServlet {
         response.setContentType("text/html");
         // Get category_id from request parameters
         String categoryIdParam = request.getParameter("category_id");
+        String action = request.getParameter("action");
 
         // Check if category_id is present
         if (categoryIdParam != null && !categoryIdParam.isEmpty()) {
@@ -46,15 +48,15 @@ public class CategoryServlet extends HttpServlet {
                     ResultSet rs = pstmt.executeQuery();
 
                     if (rs.next()) {
-                        String base64Image = null;
+                        String imagePath = null;
                         // Set the category details as request attributes to pass to the update form
                         request.setAttribute("categoryId", categoryId);
                         request.setAttribute("categoryName", rs.getString("category_name"));
-                        byte[] imageBytes = rs.getBytes("icon_url");
-                        if (imageBytes != null) {
-                            base64Image = Base64.getEncoder().encodeToString(imageBytes);
-                        }
-                        request.setAttribute("icon_url", base64Image);
+                        String imageFileName = rs.getString("icon_url");
+                        // Construct the relative image URL (assuming images are in /uploads/)
+                        imagePath = (imageFileName != null && !imageFileName.isEmpty()) ? "/uploads/" + imageFileName : "/uploads/default.jpg";
+
+                        request.setAttribute("icon_url", imagePath);
 
                         // Forward to the updateCategory.jsp page
                         request.getRequestDispatcher("updateCategory.jsp").forward(request, response);
@@ -70,7 +72,30 @@ public class CategoryServlet extends HttpServlet {
                 // Invalid category_id
                 response.sendRedirect("categories?error=Invalid category ID");
             }
+        } else if(action != null && action.equals("getCategoryNames")){
+            List<String> categoryNames = new ArrayList<>();
+            try (Connection connection = dataSource.getConnection()) {
+                String sql = "SELECT category_name FROM categories";
+                try (Statement stmt = connection.createStatement();
+                     ResultSet rs = stmt.executeQuery(sql)) {
+
+                    while (rs.next()) {
+                        categoryNames.add(rs.getString("category_name"));
+                    }
+                 }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error fetching category names.");
+                return;
+            }
+            request.setAttribute("categoryNames", categoryNames);
+
+            RequestDispatcher dispatcher = request.getRequestDispatcher("addProduct.jsp");
+            dispatcher.forward(request, response);
         } else {
+            List<Category> categories = new ArrayList<>();
+            List<Product> products = new ArrayList<>();
+
         // Get session and user role
         HttpSession session = request.getSession(false);
         String userRole = session != null ? (String) session.getAttribute("userRole") : null;
@@ -79,8 +104,6 @@ public class CategoryServlet extends HttpServlet {
         // Fetch selected category from request or default to '0' (all categories)
         String selectedCategoryName = request.getParameter("category_name") != null ? request.getParameter("category_name") : null;
 
-        List<Category> categories = new ArrayList<>();
-        List<Product> products = new ArrayList<>();
         try (Connection connection = dataSource.getConnection()) {
 
             String sql = "SELECT * FROM categories";
@@ -88,17 +111,15 @@ public class CategoryServlet extends HttpServlet {
                  ResultSet rs = stmt.executeQuery(sql)) {
 
                 while (rs.next()) {
-                    byte[] imageBytes = rs.getBytes("icon_url"); // Assuming LONGBLOB for image
+                    String imageFileName = rs.getString("icon_url");
+                    // Construct the relative image URL (assuming images are in /uploads/)
+                    String imagePath = (imageFileName != null && !imageFileName.isEmpty()) ? "/uploads/" + imageFileName : "/uploads/default.jpg";
 
-                    // Convert image to base64 string
-                    String base64Image = null;
-                    if (imageBytes != null) {
-                        base64Image = Base64.getEncoder().encodeToString(imageBytes);
-                    }
+
                     Category category = new Category(
                             rs.getInt("category_id"),
                             rs.getString("category_name"),
-                            base64Image
+                            imagePath
                     );
                     categories.add(category);
                 }
@@ -112,24 +133,48 @@ public class CategoryServlet extends HttpServlet {
             ResultSet productRs = productStmt.executeQuery();
 
             while (productRs.next()) {
-                byte[] imageBytes = productRs.getBytes("image_url"); // Assuming LONGBLOB for image
+                // Get the image file name from the database (image_url stores file name)
+                String imageFileName = productRs.getString("image_url");
+                // Construct the relative image URL (assuming images are in /uploads/)
+                String imagePath = (imageFileName != null && !imageFileName.isEmpty()) ? "/uploads/" + imageFileName : "/uploads/default.jpg";
 
-                // Convert image to base64 string
-                String base64Image = null;
-                if (imageBytes != null) {
-                    base64Image = Base64.getEncoder().encodeToString(imageBytes);
-                }
+                // Create Product object
                 Product product = new Product(
                         productRs.getInt("product_id"),
                         productRs.getString("product_name"),
                         productRs.getDouble("price"),
-                        base64Image,
+                        imagePath, // Pass the constructed image URL
                         productRs.getInt("qtyOnHand"),
                         productRs.getString("category_name")
                 );
+
                 products.add(product);
             }
 
+            String search = request.getParameter("search");
+            String sortPrice = request.getParameter("sortPrice");
+            String maxPriceParam = request.getParameter("maxPrice");
+            String minPriceParam = request.getParameter("minPrice");
+
+            if ((search != null && !search.trim().isEmpty()) ||
+                    (sortPrice != null && !sortPrice.trim().isEmpty()) ||
+                    (maxPriceParam != null && !maxPriceParam.trim().isEmpty()) ||
+                    (minPriceParam != null && !minPriceParam.trim().isEmpty())) {
+
+                if (products != null) {
+                    products.clear(); // Clear the existing data
+                }
+
+               /* double maxPrice = maxPriceParam != null ? Double.parseDouble(maxPriceParam) : Double.MAX_VALUE; // Default to a very high number if not provided
+                double minPrice = minPriceParam != null ? Double.parseDouble(minPriceParam) : 0; // Default to 0 if not provided
+*/
+                // Call your service method to fetch the filtered products
+
+                List<Product> filteredProducts = getFilteredProducts(search, sortPrice, minPriceParam, maxPriceParam);
+                if (filteredProducts != null) {
+                    products.addAll(filteredProducts);
+                }
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -144,6 +189,71 @@ public class CategoryServlet extends HttpServlet {
         }
     }
 
+    public List<Product> getFilteredProducts(String search, String sortPrice, String minPriceParam, String maxPriceParam) {
+        List<Product> products = new ArrayList<>();
+
+        // Base query
+        String query = "SELECT * FROM products WHERE 1=1";
+
+        // Append conditions dynamically
+        if (minPriceParam != null && !minPriceParam.isEmpty()) {
+            query += " AND price >= ?";
+        }
+        if (maxPriceParam != null && !maxPriceParam.isEmpty()) {
+            query += " AND price <= ?";
+        }
+        if (search != null && !search.isEmpty()) {
+            query += " AND product_name LIKE ?";
+        }
+        if (sortPrice != null) {
+            if (sortPrice.equalsIgnoreCase("low-to-high")) {
+                query += " ORDER BY price ASC";
+            } else if (sortPrice.equalsIgnoreCase("high-to-low")) {
+                query += " ORDER BY price DESC";
+            }
+        }
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            int paramIndex = 1;
+
+            // Set dynamic parameters
+            if (minPriceParam != null && !minPriceParam.isEmpty()) {
+                stmt.setDouble(paramIndex++, Double.parseDouble(minPriceParam));
+            }
+            if (maxPriceParam != null && !maxPriceParam.isEmpty()) {
+                stmt.setDouble(paramIndex++, Double.parseDouble(maxPriceParam));
+            }
+            if (search != null && !search.isEmpty()) {
+                stmt.setString(paramIndex++, "%" + search + "%");
+            }
+
+            // Execute the query
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                String imageFileName = rs.getString("image_url");
+                String imagePath = (imageFileName != null && !imageFileName.isEmpty()) ? "/uploads/" + imageFileName : "/uploads/default.jpg";
+
+                Product product = new Product(
+                        rs.getInt("product_id"),
+                        rs.getString("product_name"),
+                        rs.getDouble("price"),
+                        imagePath,
+                        rs.getInt("qtyOnHand"),
+                        rs.getString("category_name")
+
+                );
+                products.add(product);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return products;
+    }
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
@@ -153,20 +263,26 @@ public class CategoryServlet extends HttpServlet {
             String categoryName = req.getParameter("categoryName");
             Part imagePart = req.getPart("categoryImage");
 
+            String imageFileName = imagePart.getSubmittedFileName();
+
+            // Directory to save uploaded images
+            String uploadPath = getServletContext().getRealPath("/uploads/") + imageFileName;
+
             try (Connection conn = dataSource.getConnection()) {
+                // Save the uploaded image
+                try (FileOutputStream fos = new FileOutputStream(uploadPath); InputStream is = imagePart.getInputStream()) {
+                    byte[] data = new byte[is.available()];
+                    is.read(data);
+                    fos.write(data);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
                 String sql = "INSERT INTO categories (category_name,icon_url) VALUES (?, ?)";
                 PreparedStatement pstmt = conn.prepareStatement(sql);
 
                 pstmt.setString(1, categoryName);
-
-
-                // Read image data as InputStream and set it in the query
-                if (imagePart != null && imagePart.getSize() > 0) {
-                    InputStream imageStream = imagePart.getInputStream();
-                    pstmt.setBinaryStream(2, imageStream, (int) imagePart.getSize());
-                } else {
-                    pstmt.setNull(2, java.sql.Types.BLOB); // Handle case with no image
-                }
+                pstmt.setString(2, imageFileName);
 
                 // Execute the query
                 int rows = pstmt.executeUpdate();
@@ -184,7 +300,28 @@ public class CategoryServlet extends HttpServlet {
             int categoryId = Integer.parseInt(req.getParameter("categoryId"));
             String categoryName = req.getParameter("categoryName");
             Part imagePart = req.getPart("categoryImage");
+            String filePath = req.getParameter("FileName");
+            String fileName = filePath.replace("/uploads/","");
 
+            String imageFileName;
+
+            if (imagePart != null && imagePart.getSize() > 0) {
+                imageFileName = imagePart.getSubmittedFileName();
+
+                // Directory to save uploaded images
+                String uploadPath = getServletContext().getRealPath("/uploads/") + imageFileName;
+
+                // Save the uploaded image
+                try (FileOutputStream fos = new FileOutputStream(uploadPath); InputStream is = imagePart.getInputStream()) {
+                    byte[] data = new byte[is.available()];
+                    is.read(data);
+                    fos.write(data);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }else {
+                imageFileName = fileName;
+            }
             try (Connection conn = dataSource.getConnection()) {
                 // SQL update query
                 String sql = "UPDATE categories SET category_name = ?,icon_url = ? WHERE category_id = ?";
@@ -193,11 +330,10 @@ public class CategoryServlet extends HttpServlet {
                 pstmt.setString(1, categoryName);
 
                 // Handle image update
-                if (imagePart != null && imagePart.getSize() > 0) {
-                    InputStream imageStream = imagePart.getInputStream();
-                    pstmt.setBinaryStream(2, imageStream, (int) imagePart.getSize());
+                if (imageFileName != null) {
+                    pstmt.setString(2, imageFileName); // Store the image filename
                 } else {
-                    pstmt.setNull(2, java.sql.Types.BLOB);
+                    pstmt.setNull(2, java.sql.Types.VARCHAR); // If no new image is uploaded, set it to null
                 }
 
                 pstmt.setInt(3, categoryId);
@@ -205,13 +341,13 @@ public class CategoryServlet extends HttpServlet {
                 // Execute update
                 int rows = pstmt.executeUpdate();
                 if (rows > 0) {
-                    resp.sendRedirect("updateCategory.jsp?message=Category updated successfully");
+                    resp.sendRedirect("categories?message=Category updated successfully");
                 } else {
-                    resp.sendRedirect("updateCategory.jsp?productId=" + categoryId + "&error=Failed to update Category");
+                    resp.sendRedirect("categories?error=Failed to update Category");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                resp.sendRedirect("updateCategory.jsp?productId=" + categoryId + "&error=Error occurred");
+                resp.sendRedirect("categories?error=Error occurred");
             }
         }else if ("delete".equals(action)) {
             String categoryName = req.getParameter("categoryName");

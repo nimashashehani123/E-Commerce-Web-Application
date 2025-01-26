@@ -48,7 +48,24 @@
         </div>
     </div>
 </nav>
-
+<%
+    String message = request.getParameter("message");
+    String error = request.getParameter("error");
+%>
+<div id="alert-container">
+    <% if (message != null) { %>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <%= message %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <% } %>
+    <% if (error != null) { %>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <%= error %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <% } %>
+</div>
 <!-- Main Content -->
 <section>
     <div id="section">
@@ -57,6 +74,7 @@
         <div class="register-section">
             <h2>Register</h2>
             <form action="RegisterServlet" method="post" id="registerForm">
+                <input type="hidden" name="action" value="save">
                 <div class="form-group">
                     <label for="name">Full Name</label>
                     <input type="text" id="name" name="name" required>

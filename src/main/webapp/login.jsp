@@ -39,7 +39,7 @@
                     <a class="nav-link" href="categories"><i class="fa-solid fa-bag-shopping" style="color: #FFFFFF;"></i></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="cart.jsp"><i class="fa-solid fa-cart-shopping" style="color: #FFFFFF;"></i></a>
+                    <a class="nav-link" href="cart"><i class="fa-solid fa-cart-shopping" style="color: #FFFFFF;"></i></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="login.jsp"><i class="fa-solid fa-user" style="color: #FFFFFF;"></i></a>
@@ -48,6 +48,24 @@
         </div>
     </div>
 </nav>
+<%
+    String message = (String) request.getAttribute("message");
+    String error = (String) request.getAttribute("error");
+%>
+<div id="alert-container">
+    <% if (message != null) { %>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <%= message %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <% } %>
+    <% if (error != null) { %>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <%= error %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <% } %>
+</div>
 
 <section>
 <div class="container" id="login">

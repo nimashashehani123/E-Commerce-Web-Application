@@ -2,7 +2,6 @@ body {
     font-family: 'Arial', sans-serif;
     background-color: #f8f9fa;
 }
-
 .navbar {
     background: linear-gradient(90deg, #ff4b2b, #ff416c);
     transition: all 0.3s ease-in-out;
@@ -13,6 +12,7 @@ body {
     font-weight: bold;
     color: white;
 }
+
 .navbar-nav .nav-link {
     font-size: 1.1rem;
     color: white;
@@ -23,6 +23,41 @@ body {
     color: #ffdfd4;
     text-decoration: none;
 }
+
+form.d-flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.form-select, .form-control {
+    margin: 0 0.5rem;
+}
+
+.form-control {
+    width: 120px; /* Make fields smaller */
+}
+
+.form-select {
+    width: 100px; /* Make fields smaller */
+}
+
+@media (max-width: 768px) {
+    .form-select, .form-control {
+        width: 100px; /* Adjust fields for smaller screens */
+    }
+}
+
+/*.navbar-nav.ms-auto {
+    margin-left: auto;  !* Align navbar items to the right *!
+}
+
+.navbar-nav.ms-auto .nav-link {
+    font-size: 1rem; !* Reduce font size of nav items *!
+    margin-left: 1rem; !* Adjust the spacing between nav items *!
+}*/
+
 footer {
     background-color: #212529;
     color: white;
@@ -40,3 +75,66 @@ footer p {
 html {
     scroll-behavior: smooth;
 }
+
+/* Card styles for products */
+.card {
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card-img-top {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.card-body {
+    padding: 2px;
+}
+
+.card-title {
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.card-text {
+    font-size: 0.8rem;
+    margin-bottom: 2px;
+}
+
+.btn-sm {
+    font-size: 0.7rem;
+}
+
+/* Reduce padding between cards */
+.g-3 > .col {
+    padding: 10px;
+}
+#row {
+    padding: 0;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.d-flex {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 15px;
+}
+
+.category-item {
+    flex: 0 0 auto;
+    min-width: 250px;
+    text-align: center;
+}
+
+.category-item img {
+    border-radius: 50%;
+    width: 75px;
+    height: 75px;
+}
+

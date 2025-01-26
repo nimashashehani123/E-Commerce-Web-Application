@@ -78,6 +78,8 @@
         <label for="categoryName">category Name:</label>
         <input type="text" id="categoryName" name="categoryName" class="form-control" value="${categoryName}" required>
     </div>
+    <!-- Hidden field to hold the file name -->
+    <input type="hidden" id="hiddenFileName" name="FileName" value="${icon_url}">
     <div class="form-group">
         <label for="categoryImage">category Image:</label>
         <input type="file" id="categoryImage" name="categoryImage" class="form-control" accept="image/*">
@@ -85,13 +87,9 @@
             <!-- Placeholder for image preview -->
             <label>Image Preview:</label>
             <div id="imagePreview" style="margin-top: 10px;">
-                <img id="preview" src="" alt="No Image Selected" style="max-width: 100%; height: auto; display: none;">
+                <img id="preview" src="<%= request.getContextPath() + request.getAttribute("icon_url") %>" alt="No Image Selected" style="max-width: 100%; height: auto; display: none;">
             </div>
         </div>
-        <% if (request.getAttribute("icon_url") != null) { %>
-        <p>Current Image:</p>
-        <img src="data:image/png;base64,<%= request.getAttribute("icon_url") %>" alt="category Image" style="max-width: 100px;">
-        <% } %>
     </div>
     <button type="submit" class="btn btn-success">Update Category</button>
 </form>
@@ -182,7 +180,7 @@
             alertContainer.style.opacity = "0";
             setTimeout(() => alertContainer.remove(), 500); // Remove it from DOM after fade-out
         }
-    }, 2000);
+    }, 3000);
 </script>
 </body>
 </html>
