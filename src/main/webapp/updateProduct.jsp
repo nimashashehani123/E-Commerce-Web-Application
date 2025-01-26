@@ -91,13 +91,11 @@
         <label for="qtyOnHand">Quantity on Hand:</label>
         <input type="number" id="qtyOnHand" name="qtyOnHand" class="form-control" value="${qtyOnHand}" required>
     </div>
-    <!-- Hidden field to hold the file name -->
     <input type="hidden" id="hiddenFileName" name="FileName" value="${imagePath}">
     <div class="form-group">
         <label for="productImage">Product Image:</label>
         <input type="file" id="productImage" name="productImage" class="form-control" accept="image/*">
         <div class="form-group">
-            <!-- Placeholder for image preview -->
             <label>Image Preview:</label>
             <div id="imagePreview" style="margin-top: 10px;">
                 <img id="preview" src="<%= request.getContextPath() + request.getAttribute("imagePath") %>" alt="No Image Selected" style="max-width: 100%; height: auto;">

@@ -32,7 +32,7 @@ public class RegisterServlet extends HttpServlet {
 
             if (!password.equals(repassword)) {
                 req.setAttribute("error", "Passwords do not match");
-                req.getRequestDispatcher("register.jsp").forward(req, resp);
+                req.getRequestDispatcher("rcustomer_rejistration.jsp").forward(req, resp);
                 return;
             }
 
@@ -40,7 +40,7 @@ public class RegisterServlet extends HttpServlet {
 
             if (isUsernameTaken(username)) {
                 req.setAttribute("error", "Username already exists");
-                req.getRequestDispatcher("register.jsp").forward(req, resp);
+                req.getRequestDispatcher("customer_rejistration.jsp").forward(req, resp);
                 return;
             }
 
@@ -50,7 +50,7 @@ public class RegisterServlet extends HttpServlet {
                 resp.sendRedirect("login.jsp");
             } else {
                 req.setAttribute("error", "Registration failed. Please try again.");
-                req.getRequestDispatcher("register.jsp").forward(req, resp);
+                req.getRequestDispatcher("customer_rejistration.jsp").forward(req, resp);
             }
         }else if ("update".equals(action)) {
             String name = req.getParameter("name");

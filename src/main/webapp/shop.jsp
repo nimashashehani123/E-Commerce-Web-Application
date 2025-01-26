@@ -284,7 +284,7 @@
 <script src="js/jquery-3.7.1.min.js"></script>
 <script>
   function filterProducts() {
-    // Get the values of the filters
+
     const search = document.getElementById('search-input').value;
     const sortBy = document.getElementById('price-sort').value;
     const minPrice = document.getElementById('min-price').value || 0;
@@ -292,38 +292,37 @@
 
     console.log(sortBy);
 
-    // Create the AJAX request
+
     const xhr = new XMLHttpRequest();
     xhr.open('GET', 'categories?search=' + encodeURIComponent(search) + '&sortPrice=' + encodeURIComponent(sortBy) + '&minPrice=' + encodeURIComponent(minPrice) + '&maxPrice=' + encodeURIComponent(maxPrice), true);
 
     xhr.onload = function() {
       if (xhr.status === 200) {
-        // Parse the response and update only the #products-container part
+
         const response = xhr.responseText;
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = response;
 
-        // Get the updated products container from the response
+
         const updatedProducts = tempDiv.querySelector('#products-container');
-        // Replace the content of the current products container with the updated one
+
         document.getElementById('products-container').innerHTML = updatedProducts.innerHTML;
       } else {
         console.error('Error:', xhr.status, xhr.statusText);
       }
     };
 
-    // Send the request to the server
     xhr.send();
   }
 
 
   function sortByPrice() {
-    // Trigger filtering when sorting by price
+
     filterProducts();
   }
 
   function filterByPrice() {
-    // Trigger filtering when the price range filter is changed
+
     filterProducts();
   }
 
@@ -331,18 +330,17 @@
 <script>
   function confirmProductDelete(productId) {
     if (confirm('Are you sure you want to delete this product?')) {
-      // Create a form dynamically for POST request
+
       const form = document.createElement('form');
       form.method = 'POST';
-      form.action = 'addProduct'; // Common servlet URL
+      form.action = 'addProduct';
 
-      // Add hidden input for the product ID
+
       const productIdInput = document.createElement('input');
       productIdInput.type = 'hidden';
       productIdInput.name = 'productId';
       productIdInput.value = productId;
 
-      // Add hidden input for the action type
       const actionInput = document.createElement('input');
       actionInput.type = 'hidden';
       actionInput.name = 'action';
@@ -352,7 +350,6 @@
       form.appendChild(actionInput);
       document.body.appendChild(form);
 
-      // Submit the form
       form.submit();
     }
   }

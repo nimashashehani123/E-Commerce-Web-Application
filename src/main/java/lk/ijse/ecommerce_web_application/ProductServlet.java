@@ -81,7 +81,7 @@ public class ProductServlet extends HttpServlet {
             String price = request.getParameter("price");
             String categoryName = request.getParameter("categoryName");
             String qtyOnHand = request.getParameter("qtyOnHand");
-            Part file = request.getPart("productImage"); // File upload
+            Part file = request.getPart("productImage");
 
             String imageFileName = file.getSubmittedFileName();
             String uploadPath = getServletContext().getRealPath("/uploads/") + imageFileName;
