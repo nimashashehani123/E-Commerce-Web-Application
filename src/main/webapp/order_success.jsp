@@ -30,10 +30,6 @@
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <form class="d-flex" id="searchForm">
-            <input class="form-control me-2" type="text" id="searchInput" placeholder="Search products..." aria-label="Search">
-            <button class="btn btn-outline-light" type="button" id="searchButton">Search</button>
-        </form>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">

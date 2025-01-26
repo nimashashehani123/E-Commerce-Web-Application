@@ -4,6 +4,7 @@ import java.io.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import jakarta.annotation.Resource;
 import jakarta.servlet.ServletException;
@@ -94,6 +95,7 @@ public class UserServlet extends HttpServlet {
                 session.setAttribute("user_id", userId);
                 session.setAttribute("user_name", username);
                 session.setAttribute("userRole", userRole);
+                setcartcount(userId,session);
 
                 resp.sendRedirect("index.jsp");
             } else {
@@ -101,6 +103,24 @@ public class UserServlet extends HttpServlet {
                 req.getRequestDispatcher("/login.jsp").forward(req, resp);
             }
         }
+
+
+    private void setcartcount(int userId ,HttpSession session) {
+
+        String countQuery = "SELECT SUM(quantity) AS totalItems FROM cart WHERE user_id = ?";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement countStmt = connection.prepareStatement(countQuery)) {
+            countStmt.setInt(1, userId);
+            ResultSet countRs = countStmt.executeQuery();
+
+            if (countRs.next()) {
+                int cartItemCount = countRs.getInt("totalItems");
+                session.setAttribute("cartItemCount", cartItemCount);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
     private String getUserRole(String username, String password) {
         String role = null;
 
